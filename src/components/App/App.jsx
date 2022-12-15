@@ -33,7 +33,7 @@ export function App() {
     }
     try {
       if (valueSearch !== '') {
-        console.log('a');
+      
         setIsLoading(true)
         const searchImages = Fetch(valueSearch, page);
         if (searchImages.length === 0) {
