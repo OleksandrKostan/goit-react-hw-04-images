@@ -39,9 +39,7 @@ export function App() {
         if (searchImages.length === 0) {
           toast.error(`Вибачте, по вашому запиту нічого не знайдено ;( `);
         }
-        setImages(({ images }) => {
-          return [...images, ...searchImages];
-        });
+        setImages([...images, ...searchImages]);
       }
     } catch (error) {
       toast.error(`${error.message}`);
