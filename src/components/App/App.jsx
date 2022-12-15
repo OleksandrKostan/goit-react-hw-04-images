@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import { useState, useEffect} from 'react';
  
 import { ThemeProvider } from 'styled-components';
 import { theme } from '../Styled/Theme';
@@ -17,89 +17,73 @@ import { Modal } from '../Modal/Modal';
 
 
 
-export class App extends Component {
- state = {
-    images: [],
-    isLoading: false,
-    valueSearch: '',
-    page: 1,
-    modal: false,
-    Img: '',
-   Alt: '',
-   
-    
-  };
+export function App() {
+  const [images, setImages] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [valueSearch, setValueSearch] = useState('');
+  const [page, setPage] = useState(1);
+  const [modal, setModal] = useState(false);
+  const [Img, setImg] = useState('');
+  const [Alt, setAlt] = useState('');
  
-async componentDidUpdate(_, prevState) {
-  const { valueSearch, page } = this.state;
-    if (prevState.valueSearch !== valueSearch || prevState.page !== page) {
-      try {
-        if (valueSearch !== '') {
-          this.setState({isLoading: true });
-          const searchImages = await Fetch(valueSearch, page);
-          if (searchImages.length === 0) {
-            toast.error(`Вибачте, по вашому запиту нічого не знайдено ;( `);
-          }
-          this.setState(({ images }) => {
-            return {
-              images: [...images, ...searchImages],
-            };
-            
-          });
-        }
-      } catch (error) {
-        toast.error( `${error.message}`);
-      } finally {
-        this.setState({ isLoading: false });
-      }
+ 
+  useEffect(() => {
+    if (!valueSearch) {
+      return 
     }
-  }
+    try {
+      if (valueSearch !== '') {
+        console.log('a');
+        setIsLoading(true)
+        const searchImages = Fetch(valueSearch, page);
+        if (searchImages.length === 0) {
+          toast.error(`Вибачте, по вашому запиту нічого не знайдено ;( `);
+        }
+        setImages(prevImages => [...prevImages, ...images]);
+      }
+    } catch (error) {
+      toast.error(`${error.message}`);
+    } finally {
+      setIsLoading(false)
+    }
+  }, [valueSearch, page, images]);
 
+  
 
-  handleSubmit = valueSearch => {
-    this.setState({
-      images: [],
-      page: 1,
-      valueSearch,
-    });
+  const handleSubmit = valueSearch => {
+    setValueSearch(valueSearch);
+    setImages([]);
+    setPage(1);
   };
 
-  handleClickMore = () => {
-    this.setState(prevState  => ({ page: prevState.page + 1 }));
+ const handleClickMore = () => {
+  setPage(p => p  + 1)
   };
 
-  handleClickImage = e => {
-    this.setState({
-      modal: true,
-      Alt: e.target.alt,
-      Img: e.target.name,
-    });
+  const handleClickImage = e => {
+    setModal(true);
+    setImg(e.target.alt);
+    setAlt(e.target.name);
   };
 
-  handleModalClose = () => {
-    this.setState({
-      modal: false,
-      Img: '',
-      Alt: '',
-    });
+  const handleModalClose = () => {
+    setModal(false);
+    setImg('');
+    setAlt('')
   };
 
-
-  render() {
-    const {isLoading, images,  modal, Img, Alt} = this.state;
     return (<ThemeProvider theme={theme}> <GlobalStyle />
-      <Searchbar onSubmit={this.handleSubmit} /><ToastContainer />
+      <Searchbar onSubmit={handleSubmit} /><ToastContainer />
     
-        {images.length > 0 &&  <ImageGallery onClick={this.handleClickImage}
+        {images.length > 0 &&  <ImageGallery onClick={handleClickImage}
         images={images} />}
        {isLoading && <Loader />}
-        {images.length > 0 && <Button onClick={this.handleClickMore}  />}
+        {images.length > 0 && <Button onClick={handleClickMore}  />}
         {modal ? ( <Modal
             src={Img}
             alt={Alt}
-            handleModalClose={this.handleModalClose}
+            handleModalClose={handleModalClose}
           />
         ) : null}
    </ThemeProvider> );
   }
-}
