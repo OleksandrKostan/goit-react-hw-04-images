@@ -18,7 +18,7 @@ import { Modal } from '../Modal/Modal';
 
 
 export function App() {
-  const [images, setImages] = useState([]);
+  const [images, setImages] = useState([ ]);
   const [isLoading, setIsLoading] = useState(false);
   const [valueSearch, setValueSearch] = useState('');
   const [page, setPage] = useState(1);
@@ -34,12 +34,14 @@ export function App() {
     try {
       if (valueSearch !== '') {
       
-        setIsLoading(true)
-        const searchImages = Fetch(valueSearch, page);
+       setIsLoading(true)
+        const searchImages =  Fetch(valueSearch, page);
         if (searchImages.length === 0) {
           toast.error(`Вибачте, по вашому запиту нічого не знайдено ;( `);
         }
-        setImages(prevImages => [...prevImages, ...images]);
+        setImages(({ images }) => {
+          return [...images, ...searchImages];
+        });
       }
     } catch (error) {
       toast.error(`${error.message}`);
