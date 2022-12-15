@@ -84,26 +84,6 @@ async componentDidUpdate(_, prevState) {
     });
   };
 
-  // handleKeyDown = e => {
-  //   if (e.code === 'Escape') {
-  //     this.handleModalClose();
-  //   } 
-  // };
-
-// handleBackdropClick = e => {
-//     if (e.currentTarget === e.target) {
-//      this.handleModalClose();
-//     }
-//   };
-//  async componentDidMount() {
-//    window.addEventListener('keydown', this.handleKeyDown);
-
-//   };
-
-// componentWillUnmount() {
-//     window.removeEventListener('keydown', this.handleKeyDown);
-// }
-
 
   render() {
     const {isLoading, images,  modal, Img, Alt} = this.state;
