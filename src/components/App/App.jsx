@@ -27,26 +27,23 @@ export function App() {
   const [Alt, setAlt] = useState('');
  
  
-  useEffect(() => {
+   useEffect(() => {
     if (!valueSearch) {
-      return 
+      return;
     }
-    try {
-      if (valueSearch !== '') {
-      
-       setIsLoading(true)
-        const searchImages =  Fetch(valueSearch, page);
+    setIsLoading(true);
+    Fetch(valueSearch, page)
+      .then(searchImages => {
         if (searchImages.length === 0) {
           toast.error(`Вибачте, по вашому запиту нічого не знайдено ;( `);
         }
-        setImages([...images, ...searchImages]);
-      }
-    } catch (error) {
-      toast.error(`${error.message}`);
-    } finally {
-      setIsLoading(false)
-    }
-  }, [valueSearch, page, images]);
+        setImages(prevState => [...prevState, ...searchImages]);
+      })
+      .catch(error => {
+        toast.error(`${error.message}`);
+      })
+      .finally(() => setIsLoading(false));
+  }, [valueSearch, page]);
 
   
 
@@ -56,14 +53,10 @@ export function App() {
     setPage(1);
   };
 
- const handleClickMore = () => {
-  setPage(p => p  + 1)
-  };
-
   const handleClickImage = e => {
     setModal(true);
-    setImg(e.target.alt);
-    setAlt(e.target.name);
+    setImg(e.target.name);
+    setAlt(e.target.alt);
   };
 
   const handleModalClose = () => {
@@ -74,16 +67,9 @@ export function App() {
 
     return (<ThemeProvider theme={theme}> <GlobalStyle />
       <Searchbar onSubmit={handleSubmit} /><ToastContainer />
-    
-        {images.length > 0 &&  <ImageGallery onClick={handleClickImage}
-        images={images} />}
+       {images.length > 0 &&  <ImageGallery onClick={handleClickImage} images={images} />}
        {isLoading && <Loader />}
-        {images.length > 0 && <Button onClick={handleClickMore}  />}
-        {modal ? ( <Modal
-            src={Img}
-            alt={Alt}
-            handleModalClose={handleModalClose}
-          />
-        ) : null}
+       {images.length > 0 && <Button onClick={() => {setPage(p => p + 1)}}  />}
+       {modal ? ( <Modal src={Img} alt={Alt} handleModalClose={handleModalClose}/>) : null}
    </ThemeProvider> );
   }
